@@ -2,7 +2,7 @@
     "name": "gratlinie/contao-gratreviews",
     "description": "GratReviews – Google-Bewertungen automatisch abrufen und im Stil von GratFrame anzeigen",
     "type": "contao-bundle",
-    "license": "proprietary",
+    "license": "MIT",
     "authors": [
         {
             "name": "Gratlinie",

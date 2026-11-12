@@ -1,6 +1,6 @@
 # Changelog
 
-## Unveröffentlicht
+## 0.1.2 (2026-11-12)
 
 - Fix: „Jetzt abrufen“ scheiterte an der Rechteprüfung („Could not find the subject …“) und leitete danach auf die
   Startseite statt zurück zur Liste

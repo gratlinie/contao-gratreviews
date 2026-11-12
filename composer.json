@@ -1,14 +1,28 @@
 {
     "name": "gratlinie/contao-gratreviews",
     "description": "GratReviews – Google-Bewertungen automatisch abrufen und im Stil von GratFrame anzeigen",
+    "keywords": [
+        "contao",
+        "bewertungen",
+        "reviews",
+        "google",
+        "google-reviews",
+        "places-api",
+        "gratframe"
+    ],
     "type": "contao-bundle",
     "license": "MIT",
+    "homepage": "https://github.com/gratlinie/contao-gratreviews",
     "authors": [
         {
             "name": "Gratlinie",
             "email": "mail@gratlinie.de"
         }
     ],
+    "support": {
+        "issues": "https://github.com/gratlinie/contao-gratreviews/issues",
+        "source": "https://github.com/gratlinie/contao-gratreviews"
+    },
     "require": {
         "php": "^8.3",
         "contao/core-bundle": "^5.7",

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1 (2026-11-12)
+
+- Logo, Stichwörter und Support-Links für Packagist und den Contao Manager
+
 ## 0.1.0 (2026-11-12)
 
 - Erste Version: Quellen *Google* (Places API New, Profilsuche, Cronjob, „Jetzt abrufen“, `gratreviews:sync`) und

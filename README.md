@@ -1,3 +1,5 @@
+<img src="logo.svg" width="96" height="96" alt="">
+
 # GratReviews
 
 Google-Bewertungen automatisch abrufen und im Stil von [GratFrame](https://www.gratframe.de) anzeigen –

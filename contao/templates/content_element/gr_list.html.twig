@@ -25,7 +25,13 @@
                             {% else %}
                                 <span class="gr-review__name">{{ review.author }}</span>
                             {% endif %}
-                            <span class="gr-review__meta">{{ review.date_formatted }}{% if review.sourceType == 'google' %} · {% if review.reviewUrl %}<a href="{{ review.reviewUrl }}" target="_blank" rel="noopener">Google</a>{% else %}Google{% endif %}{% endif %}</span>
+                            <span class="gr-review__meta">
+                                <span>{{ review.date_formatted }}</span>
+                                {% if review.sourceType == 'google' %}
+                                    <span class="gr-sep" aria-hidden="true">·</span>
+                                    {% if review.reviewUrl %}<a href="{{ review.reviewUrl }}" target="_blank" rel="noopener">Google</a>{% else %}<span>Google</span>{% endif %}
+                                {% endif %}
+                            </span>
                         </span>
                     </div>
                 </li>

@@ -30,3 +30,10 @@ $GLOBALS['TL_LANG']['tl_gr_source']['published'] = ['Veröffentlichen', 'Bewertu
 $GLOBALS['TL_LANG']['tl_gr_source']['sync'] = ['Jetzt abrufen', 'Bewertungen der Quelle ID %s jetzt abrufen'];
 $GLOBALS['TL_LANG']['tl_gr_source']['children'] = ['Bewertungen', 'Bewertungen der Quelle ID %s'];
 $GLOBALS['TL_LANG']['tl_gr_source']['noResults'] = 'Google hat zu diesem Suchbegriff kein Unternehmensprofil gefunden.';
+
+$GLOBALS['TL_LANG']['tl_gr_source']['new'] = ['Neue Quelle', 'Neue Quelle anlegen'];
+$GLOBALS['TL_LANG']['tl_gr_source']['show'] = ['Details', 'Details der Quelle ID %s anzeigen'];
+$GLOBALS['TL_LANG']['tl_gr_source']['edit'] = ['Bearbeiten', 'Quelle ID %s bearbeiten'];
+$GLOBALS['TL_LANG']['tl_gr_source']['copy'] = ['Duplizieren', 'Quelle ID %s duplizieren'];
+$GLOBALS['TL_LANG']['tl_gr_source']['delete'] = ['Löschen', 'Quelle ID %s löschen'];
+$GLOBALS['TL_LANG']['tl_gr_source']['toggle'] = ['Veröffentlichen', 'Quelle ID %s veröffentlichen/unveröffentlichen'];

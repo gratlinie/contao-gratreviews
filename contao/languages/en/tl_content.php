@@ -18,4 +18,5 @@ $GLOBALS['TL_LANG']['tl_content']['grMinRatingOptions'] = [1 => '1 star', 2 => '
 $GLOBALS['TL_LANG']['tl_content']['grOnlyText'] = ['Text only', 'Skip reviews without text (stars only).'];
 $GLOBALS['TL_LANG']['tl_content']['grLayout'] = ['Layout', ''];
 $GLOBALS['TL_LANG']['tl_content']['grLayoutOptions'] = ['grid' => 'Grid', 'slider' => 'Slider'];
+$GLOBALS['TL_LANG']['tl_content']['grShowNotice'] = ['Show notice', 'Required in Germany (§ 5b (3) UWG) wherever reviews are shown. If summary and list are shown together, one notice is enough.'];
 $GLOBALS['TL_LANG']['tl_content']['grNotice'] = ['Authenticity notice', 'Required in Germany (§ 5b (3) UWG): whether and how you verify that reviews come from real customers. Empty: default text depending on the source.'];

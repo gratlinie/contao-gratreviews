@@ -40,6 +40,7 @@ $GLOBALS['TL_DCA']['tl_gr_source'] = [
             'sync' => [
                 'route' => 'gratreviews_sync',
                 'icon' => 'sync.svg',
+                'primary' => true,
                 'prefetch' => false,
             ],
             'copy',
@@ -120,7 +121,7 @@ $GLOBALS['TL_DCA']['tl_gr_source'] = [
         'ratingAverage' => [
             'inputType' => 'text',
             'eval' => ['readonly' => true, 'doNotCopy' => true, 'tl_class' => 'w50'],
-            'sql' => 'decimal(3,2) NOT NULL default 0',
+            'sql' => ['type' => 'decimal', 'precision' => 3, 'scale' => 2, 'default' => '0.00'],
         ],
         'ratingCount' => [
             'inputType' => 'text',

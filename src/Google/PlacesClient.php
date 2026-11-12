@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Gratlinie\GratReviewsBundle\Google;
 
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -12,6 +13,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  *
  * Place Details liefert Gesamtnote, Anzahl und höchstens 5 Bewertungen (von Google nach Relevanz
  * ausgewählt, eine Sortierung nach Datum gibt es in der neuen API nicht).
+ *
+ * GRATREVIEWS_PLACES_URL ersetzt die Basis-URL (Tests gegen einen Mock-Server, Proxy).
  */
 class PlacesClient
 {
@@ -19,8 +22,11 @@ class PlacesClient
 
     private const DETAILS_FIELDS = 'id,displayName,formattedAddress,rating,userRatingCount,reviews,googleMapsUri,googleMapsLinks';
 
-    public function __construct(private readonly HttpClientInterface $httpClient)
-    {
+    public function __construct(
+        private readonly HttpClientInterface $httpClient,
+        #[Autowire('%env(default::GRATREVIEWS_PLACES_URL)%')]
+        private readonly string|null $baseUrl = null,
+    ) {
     }
 
     /**
@@ -63,7 +69,7 @@ class PlacesClient
         $options['headers'] = ['X-Goog-Api-Key' => $apiKey, 'X-Goog-FieldMask' => $fieldMask];
 
         try {
-            $response = $this->httpClient->request($method, self::BASE.$path, $options);
+            $response = $this->httpClient->request($method, ($this->baseUrl ?: self::BASE).$path, $options);
             $data = $response->toArray(false);
             $status = $response->getStatusCode();
         } catch (ExceptionInterface $exception) {

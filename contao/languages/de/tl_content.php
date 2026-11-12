@@ -18,4 +18,5 @@ $GLOBALS['TL_LANG']['tl_content']['grMinRatingOptions'] = [1 => '1 Stern', 2 => 
 $GLOBALS['TL_LANG']['tl_content']['grOnlyText'] = ['Nur mit Text', 'Bewertungen ohne Text (nur Sterne) auslassen.'];
 $GLOBALS['TL_LANG']['tl_content']['grLayout'] = ['Darstellung', ''];
 $GLOBALS['TL_LANG']['tl_content']['grLayoutOptions'] = ['grid' => 'Raster', 'slider' => 'Slider'];
+$GLOBALS['TL_LANG']['tl_content']['grShowNotice'] = ['Hinweis anzeigen', 'Pflichtangabe nach § 5b Abs. 3 UWG, sobald Bewertungen zu sehen sind. Stehen Übersicht und Liste untereinander, genügt der Hinweis an einem der beiden Elemente.'];
 $GLOBALS['TL_LANG']['tl_content']['grNotice'] = ['Hinweis zur Echtheit', 'Pflichtangabe nach § 5b Abs. 3 UWG: ob und wie geprüft wird, dass die Bewertungen von echten Kundinnen und Kunden stammen. Leer: passender Standardtext je nach Quelle.'];

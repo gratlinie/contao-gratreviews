@@ -30,3 +30,10 @@ $GLOBALS['TL_LANG']['tl_gr_source']['published'] = ['Publish', 'Show reviews of 
 $GLOBALS['TL_LANG']['tl_gr_source']['sync'] = ['Fetch now', 'Fetch reviews of source ID %s now'];
 $GLOBALS['TL_LANG']['tl_gr_source']['children'] = ['Reviews', 'Reviews of source ID %s'];
 $GLOBALS['TL_LANG']['tl_gr_source']['noResults'] = 'Google found no business profile for this search term.';
+
+$GLOBALS['TL_LANG']['tl_gr_source']['new'] = ['New source', 'Create a new source'];
+$GLOBALS['TL_LANG']['tl_gr_source']['show'] = ['Details', 'Show the details of source ID %s'];
+$GLOBALS['TL_LANG']['tl_gr_source']['edit'] = ['Edit', 'Edit source ID %s'];
+$GLOBALS['TL_LANG']['tl_gr_source']['copy'] = ['Duplicate', 'Duplicate source ID %s'];
+$GLOBALS['TL_LANG']['tl_gr_source']['delete'] = ['Delete', 'Delete source ID %s'];
+$GLOBALS['TL_LANG']['tl_gr_source']['toggle'] = ['Publish', 'Publish/unpublish source ID %s'];

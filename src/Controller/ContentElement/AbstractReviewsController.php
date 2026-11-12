@@ -36,6 +36,12 @@ abstract class AbstractReviewsController extends AbstractContentElementControlle
 
     protected function addNotice(FragmentTemplate $template, ContentModel $model, array $sources): void
     {
+        if (!$model->grShowNotice) {
+            $template->set('gr_notice', '');
+
+            return;
+        }
+
         $notice = trim((string) $model->grNotice);
 
         if ('' === $notice) {

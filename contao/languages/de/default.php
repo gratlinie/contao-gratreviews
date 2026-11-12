@@ -8,6 +8,8 @@ $GLOBALS['TL_LANG']['CTE']['gr_list'] = ['Bewertungen: Liste', 'Bewertungen als 
 
 $GLOBALS['TL_LANG']['MSC']['gr_stars'] = '%s von 5 Sternen';
 $GLOBALS['TL_LANG']['MSC']['gr_count'] = '%s Bewertungen';
+$GLOBALS['TL_LANG']['MSC']['gr_count_one'] = '1 Bewertung';
+$GLOBALS['TL_LANG']['MSC']['gr_count_google_one'] = '1 Bewertung bei Google';
 $GLOBALS['TL_LANG']['MSC']['gr_count_google'] = '%s Bewertungen bei Google';
 $GLOBALS['TL_LANG']['MSC']['gr_all_reviews'] = 'Alle Bewertungen bei Google';
 $GLOBALS['TL_LANG']['MSC']['gr_write_review'] = 'Bewertung schreiben';

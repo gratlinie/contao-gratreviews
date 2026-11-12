@@ -11,15 +11,15 @@
         </p>
         <p class="gr-summary__count">
             {%- if gr_sources|length == 1 and google -%}
-                {{ 'MSC.gr_count_google'|trans([gr_summary.count], 'contao_default') }}
+                {{ ('MSC.gr_count_google' ~ (gr_summary.count == 1 ? '_one'))|trans([gr_summary.count], 'contao_default') }}
             {%- else -%}
-                {{ 'MSC.gr_count'|trans([gr_summary.count], 'contao_default') }}
+                {{ ('MSC.gr_count' ~ (gr_summary.count == 1 ? '_one'))|trans([gr_summary.count], 'contao_default') }}
             {%- endif -%}
         </p>
         {% if gr_sources|length > 1 %}
             <ul class="gr-summary__sources">
                 {% for source in gr_sources %}
-                    <li>{{ source.title }}: {{ source.ratingAverage|number_format(1, ',') }} ★ · {{ 'MSC.gr_count'|trans([source.ratingCount], 'contao_default') }}</li>
+                    <li><span>{{ source.title }}: {{ source.ratingAverage|number_format(1, ',') }} ★</span><span class="gr-sep" aria-hidden="true">·</span><span>{{ ('MSC.gr_count' ~ (source.ratingCount == 1 ? '_one'))|trans([source.ratingCount], 'contao_default') }}</span></li>
                 {% endfor %}
             </ul>
         {% endif %}

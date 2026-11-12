@@ -115,11 +115,12 @@ class SourceListener
         $text = StringUtil::substr(strip_tags((string) $row['text']), 180);
 
         return \sprintf(
-            '<div><span style="color:#e8a317">%s</span> <strong>%s</strong> <span style="color:#999">– %s%s</span></div>%s',
+            '<div%s><span style="color:#e8a317">%s</span> <strong>%s</strong> <span style="color:#999">– %s%s</span></div>%s',
+            $row['published'] ? '' : ' style="opacity:.5"',
             $stars,
             StringUtil::specialchars($row['author']),
             Date::parse(Date::getNumericDateFormat(), (int) $row['date']),
-            $row['featured'] ? ' · ★ hervorgehoben' : '',
+            ($row['featured'] ? ' · ★ '.($GLOBALS['TL_LANG']['tl_gr_review']['isFeatured'] ?? '') : '').($row['published'] ? '' : ' · '.($GLOBALS['TL_LANG']['tl_gr_review']['hidden'] ?? '')),
             '' !== $text ? '<div style="margin-top:4px;color:#666">'.StringUtil::specialchars($text).'</div>' : '',
         );
     }

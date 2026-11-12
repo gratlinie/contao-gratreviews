@@ -8,6 +8,8 @@ $GLOBALS['TL_LANG']['CTE']['gr_list'] = ['Reviews: list', 'Reviews as a grid or 
 
 $GLOBALS['TL_LANG']['MSC']['gr_stars'] = '%s out of 5 stars';
 $GLOBALS['TL_LANG']['MSC']['gr_count'] = '%s reviews';
+$GLOBALS['TL_LANG']['MSC']['gr_count_one'] = '1 review';
+$GLOBALS['TL_LANG']['MSC']['gr_count_google_one'] = '1 review on Google';
 $GLOBALS['TL_LANG']['MSC']['gr_count_google'] = '%s reviews on Google';
 $GLOBALS['TL_LANG']['MSC']['gr_all_reviews'] = 'All reviews on Google';
 $GLOBALS['TL_LANG']['MSC']['gr_write_review'] = 'Write a review';

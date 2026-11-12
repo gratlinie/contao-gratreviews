@@ -1,5 +1,10 @@
 # Changelog
 
+## Unveröffentlicht
+
+- Fix: „Jetzt abrufen“ scheiterte an der Rechteprüfung („Could not find the subject …“) und leitete danach auf die
+  Startseite statt zurück zur Liste
+
 ## 0.1.1 (2026-11-12)
 
 - Logo, Stichwörter und Support-Links für Packagist und den Contao Manager

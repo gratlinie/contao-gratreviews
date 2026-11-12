@@ -5,7 +5,7 @@ Contao 5.7, PHP ≥ 8.3. Läuft auch ohne GratFrame (eigene Styles mit `--gr-*`-
 
 ## Funktionen
 
-- **Quellen** (Backend → Bewertungen):
+- **Quellen** (Backend → Inhalte → Bewertungen):
   - *Google*: API-Schlüssel des Kunden, Profil per Suche (Firmenname, Ort) auswählen, Abruf per Cronjob im
     gewählten Intervall, „Jetzt abrufen“ in der Liste, Befehl `gratreviews:sync [id]`.
   - *Eigene Bewertungen*: von Hand gepflegt, z. B. ältere Bewertungen oder per Mail erhaltene.

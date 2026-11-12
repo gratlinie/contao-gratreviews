@@ -1,0 +1,40 @@
+{% extends '@Contao/content_element/_base.html.twig' %}
+{% import '@Contao/component/_gr_stars.html.twig' as gr %}
+
+{% block content %}
+    {% add 'gratreviews_css' to head %}<link rel="stylesheet" href="{{ asset('css/gratreviews.css', 'gratlinie_grat_reviews') }}">{% endadd %}
+    {% set google = gr_sources|filter(s => s.type == 'google')|first %}
+    <div class="gr-summary">
+        <p class="gr-summary__score">
+            <span class="gr-summary__value">{{ gr_summary.average|number_format(1, ',') }}</span>
+            {{ gr.stars(gr_summary.average) }}
+        </p>
+        <p class="gr-summary__count">
+            {%- if gr_sources|length == 1 and google -%}
+                {{ 'MSC.gr_count_google'|trans([gr_summary.count], 'contao_default') }}
+            {%- else -%}
+                {{ 'MSC.gr_count'|trans([gr_summary.count], 'contao_default') }}
+            {%- endif -%}
+        </p>
+        {% if gr_sources|length > 1 %}
+            <ul class="gr-summary__sources">
+                {% for source in gr_sources %}
+                    <li>{{ source.title }}: {{ source.ratingAverage|number_format(1, ',') }} ★ · {{ 'MSC.gr_count'|trans([source.ratingCount], 'contao_default') }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if (gr_show_reviews_link and google.reviewsUrl|default) or (gr_show_write_link and google.writeReviewUrl|default) %}
+            <p class="gr-summary__links">
+                {% if gr_show_reviews_link and google.reviewsUrl|default %}
+                    <a class="gr-link" href="{{ google.reviewsUrl }}" target="_blank" rel="noopener">{{ 'MSC.gr_all_reviews'|trans([], 'contao_default') }}</a>
+                {% endif %}
+                {% if gr_show_write_link and google.writeReviewUrl|default %}
+                    <a class="gr-link" href="{{ google.writeReviewUrl }}" target="_blank" rel="noopener">{{ 'MSC.gr_write_review'|trans([], 'contao_default') }}</a>
+                {% endif %}
+            </p>
+        {% endif %}
+        {% if gr_notice %}
+            <p class="gr-notice">{{ gr_notice }}</p>
+        {% endif %}
+    </div>
+{% endblock %}

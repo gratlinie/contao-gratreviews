@@ -1,0 +1,5 @@
+{# Sterne als Text mit Verlauf: der gefüllte Anteil entspricht der Note (auch Kommawerte) #}
+{% macro stars(value) %}
+    {%- set label = 'MSC.gr_stars'|trans([value|number_format(1, ',')], 'contao_default') -%}
+    <span class="gr-stars" style="--gr-rating: {{ value }}" role="img" aria-label="{{ label }}"><span aria-hidden="true">★★★★★</span></span>
+{%- endmacro %}

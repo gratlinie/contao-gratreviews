@@ -1,0 +1,38 @@
+{% extends '@Contao/content_element/_base.html.twig' %}
+{% import '@Contao/component/_gr_stars.html.twig' as gr %}
+
+{% block content %}
+    {% add 'gratreviews_css' to head %}<link rel="stylesheet" href="{{ asset('css/gratreviews.css', 'gratlinie_grat_reviews') }}">{% endadd %}
+    {% add 'gratreviews_js' to body %}<script src="{{ asset('js/gratreviews.js', 'gratlinie_grat_reviews') }}" defer></script>{% endadd %}
+    <div class="gr-list gr-list--{{ gr_layout }}" data-gr-list data-label-more="{{ 'MSC.gr_more'|trans([], 'contao_default') }}" data-label-less="{{ 'MSC.gr_less'|trans([], 'contao_default') }}" data-label-prev="{{ 'MSC.gr_prev'|trans([], 'contao_default') }}" data-label-next="{{ 'MSC.gr_next'|trans([], 'contao_default') }}">
+        <ul class="gr-list__items" role="list">
+            {% for review in gr_reviews %}
+                <li class="gr-review{{ review.featured ? ' gr-review--featured' }}">
+                    {{ gr.stars(review.rating) }}
+                    {% if review.text %}
+                        <div class="gr-review__text" data-gr-text><p>{{ review.text|nl2br }}</p></div>
+                    {% endif %}
+                    <div class="gr-review__author">
+                        {% if review.avatar_figure %}
+                            {% set img = review.avatar_figure.image.img %}
+                            <img class="gr-review__avatar" src="{{ img.src }}"{% if img.srcset|default and img.srcset != img.src %} srcset="{{ img.srcset }}"{% endif %} width="48" height="48" alt="" loading="lazy">
+                        {% else %}
+                            <span class="gr-review__avatar gr-review__avatar--initials" aria-hidden="true">{{ review.initials }}</span>
+                        {% endif %}
+                        <span class="gr-review__who">
+                            {% if review.authorUrl %}
+                                <a class="gr-review__name" href="{{ review.authorUrl }}" target="_blank" rel="noopener nofollow">{{ review.author }}</a>
+                            {% else %}
+                                <span class="gr-review__name">{{ review.author }}</span>
+                            {% endif %}
+                            <span class="gr-review__meta">{{ review.date_formatted }}{% if review.sourceType == 'google' %} · {% if review.reviewUrl %}<a href="{{ review.reviewUrl }}" target="_blank" rel="noopener">Google</a>{% else %}Google{% endif %}{% endif %}</span>
+                        </span>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        {% if gr_notice %}
+            <p class="gr-notice">{{ gr_notice }}</p>
+        {% endif %}
+    </div>
+{% endblock %}

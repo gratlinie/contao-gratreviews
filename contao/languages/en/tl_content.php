@@ -8,8 +8,8 @@ $GLOBALS['TL_LANG']['tl_content']['gr_list_legend'] = 'Selection and display';
 $GLOBALS['TL_LANG']['tl_content']['gr_notice_legend'] = 'Authenticity notice';
 
 $GLOBALS['TL_LANG']['tl_content']['grSources'] = ['Sources', 'Show reviews of these sources (back end → Reviews).'];
-$GLOBALS['TL_LANG']['tl_content']['grLinks'] = ['Links to Google', 'Link below the rating.'];
-$GLOBALS['TL_LANG']['tl_content']['grLinkOptions'] = ['reviews' => 'All reviews on Google', 'write' => 'Write a review'];
+$GLOBALS['TL_LANG']['tl_content']['grLinks'] = ['Links to the review profile', 'Link below the rating. “Write a review” is only available for Google.'];
+$GLOBALS['TL_LANG']['tl_content']['grLinkOptions'] = ['reviews' => 'All reviews (Google or ProvenExpert)', 'write' => 'Write a review'];
 $GLOBALS['TL_LANG']['tl_content']['grLimit'] = ['Number', '0 = all.'];
 $GLOBALS['TL_LANG']['tl_content']['grOrder'] = ['Order', ''];
 $GLOBALS['TL_LANG']['tl_content']['grOrderOptions'] = ['featured' => 'Featured first, then newest', 'date' => 'Newest first', 'rating' => 'Best first', 'random' => 'Random'];

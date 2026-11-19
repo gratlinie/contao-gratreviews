@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'gratreviews:sync', description: 'Ruft die Bewertungen der Google-Quellen ab (ohne ID: alle veröffentlichten, unabhängig vom Intervall).')]
+#[AsCommand(name: 'gratreviews:sync', description: 'Ruft die Bewertungen der Google- und ProvenExpert-Quellen ab (ohne ID: alle veröffentlichten, unabhängig vom Intervall).')]
 class SyncReviewsCommand extends Command
 {
     public function __construct(
@@ -33,7 +33,7 @@ class SyncReviewsCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $ids = null !== $input->getArgument('id')
             ? [(int) $input->getArgument('id')]
-            : array_map('intval', $this->db->fetchFirstColumn("SELECT id FROM tl_gr_source WHERE type = 'google' AND published = 1"));
+            : array_map('intval', $this->db->fetchFirstColumn("SELECT id FROM tl_gr_source WHERE type IN ('google', 'provenexpert') AND published = 1"));
         $failed = false;
 
         foreach ($ids as $id) {

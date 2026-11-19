@@ -45,8 +45,14 @@ abstract class AbstractReviewsController extends AbstractContentElementControlle
         $notice = trim((string) $model->grNotice);
 
         if ('' === $notice) {
-            $types = array_unique(array_column($sources, 'type'));
-            $notice = $GLOBALS['TL_LANG']['MSC']['gr_notice_'.(1 === \count($types) ? $types[0] : 'mixed')] ?? '';
+            $types = array_values(array_unique(array_column($sources, 'type')));
+
+            if (1 === \count($types) || [] === array_diff($types, ['google', 'manual'])) {
+                $notice = $GLOBALS['TL_LANG']['MSC']['gr_notice_'.(1 === \count($types) ? $types[0] : 'mixed')] ?? '';
+            } else {
+                // Weitere Kombinationen: die Texte der einzelnen Quellen hintereinander
+                $notice = implode(' ', array_filter(array_map(static fn (string $type): string => $GLOBALS['TL_LANG']['MSC']['gr_notice_'.$type] ?? '', $types)));
+            }
         }
 
         $template->set('gr_notice', $notice);

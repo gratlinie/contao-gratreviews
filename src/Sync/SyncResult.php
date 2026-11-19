@@ -12,9 +12,9 @@ final class SyncResult
     ) {
     }
 
-    public static function ok(int $created, int $updated, float $rating, int $count): self
+    public static function ok(int $created, int $updated, float $rating, int $count, string $platform = 'Google', string $note = ''): self
     {
-        return new self(true, \sprintf('OK – %d neu, %d aktualisiert; Google: %s ★ aus %d Bewertungen', $created, $updated, number_format($rating, 1, ',', ''), $count));
+        return new self(true, \sprintf('OK – %d neu, %d aktualisiert; %s: %s ★ aus %d Bewertungen', $created, $updated, $platform, number_format($rating, 1, ',', ''), $count).('' !== $note ? "\n".$note : ''));
     }
 
     public static function failed(string $reason): self

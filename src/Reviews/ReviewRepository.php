@@ -43,6 +43,11 @@ class ReviewRepository
                 $rows[$id]['ratingAverage'] = (float) $stats['average'];
                 $rows[$id]['ratingCount'] = (int) $stats['count'];
             }
+
+            // ProvenExpert liefert keinen Link, „Alle Bewertungen“ führt auf den eingetragenen Profil-Link
+            if ('provenexpert' === $row['type']) {
+                $rows[$id]['reviewsUrl'] = (string) $row['profileUrl'];
+            }
         }
 
         return array_values(array_filter(array_map(static fn (int $id) => $rows[$id] ?? null, $ids)));
@@ -81,7 +86,7 @@ class ReviewRepository
             default => 'r.featured DESC, r.date DESC',
         };
 
-        $sql = 'SELECT r.*, s.type AS sourceType, s.title AS sourceTitle FROM tl_gr_review r JOIN tl_gr_source s ON s.id = r.pid'
+        $sql = 'SELECT r.*, s.type AS sourceType, s.title AS sourceTitle, s.profileUrl AS sourceUrl FROM tl_gr_review r JOIN tl_gr_source s ON s.id = r.pid'
             .' WHERE s.published = 1 AND r.published = 1 AND r.pid IN (?) AND r.rating >= ?'
             .($onlyText ? " AND TRIM(COALESCE(r.text, '')) != ''" : '')
             .' ORDER BY '.$orderBy

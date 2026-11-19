@@ -1,6 +1,6 @@
 {
     "name": "gratlinie/contao-gratreviews",
-    "description": "GratReviews – Google-Bewertungen automatisch abrufen und im Stil von GratFrame anzeigen",
+    "description": "GratReviews – Google- und ProvenExpert-Bewertungen automatisch abrufen und im Stil von GratFrame anzeigen",
     "keywords": [
         "contao",
         "bewertungen",
@@ -8,6 +8,7 @@
         "google",
         "google-reviews",
         "places-api",
+        "provenexpert",
         "gratframe"
     ],
     "type": "contao-bundle",

@@ -1,5 +1,16 @@
 # Changelog
 
+## Unveröffentlicht
+
+- Neue Quellenart *ProvenExpert* (API-ID + API-Key): Gesamtnote und Anzahl in jedem Paket, alle einzelnen
+  Bewertungen ab Paket PREMIUM; Abruf per Cronjob, „Jetzt abrufen“ und `gratreviews:sync` wie bei Google. Auf
+  ProvenExpert gelöschte/unveröffentlichte Bewertungen werden entfernt, keine E-Mail-Adressen gespeichert,
+  Nachnamen gekürzt
+- Übersicht: „Alle Bewertungen bei ProvenExpert“ (Profil-Link der Quelle), Anzahl „… bei ProvenExpert“;
+  Liste: Herkunft „ProvenExpert“, „Anonym“ bei Bewertungen ohne Namen; Hinweis zur Echtheit für ProvenExpert und
+  weitere Quellen-Kombinationen
+- Datenbank: neue Felder `tl_gr_source.peApiId`, `peApiKey` (Migration über das Install-Tool bzw. `contao:migrate`)
+
 ## 0.1.2 (2026-11-12)
 
 - Fix: „Jetzt abrufen“ scheiterte an der Rechteprüfung („Could not find the subject …“) und leitete danach auf die

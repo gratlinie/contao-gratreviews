@@ -6,8 +6,8 @@ use Contao\DataContainer;
 use Contao\DC_Table;
 
 /*
- * Quelle von Bewertungen: ein Google-Unternehmensprofil (Abruf über die Places API) oder eigene,
- * von Hand gepflegte Bewertungen. Die Bewertungen hängen als Kinder an der Quelle (tl_gr_review).
+ * Quelle von Bewertungen: ein Google-Unternehmensprofil (Abruf über die Places API), ein ProvenExpert-Profil
+ * (Abruf über die ProvenExpert-API) oder eigene, von Hand gepflegte Bewertungen. Die Bewertungen hängen als Kinder an der Quelle (tl_gr_review).
  */
 $GLOBALS['TL_DCA']['tl_gr_source'] = [
     'config' => [
@@ -53,6 +53,7 @@ $GLOBALS['TL_DCA']['tl_gr_source'] = [
         '__selector__' => ['type'],
         'default' => '{title_legend},title,type',
         'google' => '{title_legend},title,type;{google_legend},googleApiKey,googleQuery,googlePlaceId,language;{sync_legend},syncInterval,avatarFolder;{status_legend},placeName,placeAddress,ratingAverage,ratingCount,lastSync,lastStatus;{publish_legend},published',
+        'provenexpert' => '{title_legend},title,type;{provenexpert_legend},peApiId,peApiKey,profileUrl;{sync_legend},syncInterval;{status_legend},ratingAverage,ratingCount,lastSync,lastStatus;{publish_legend},published',
         'manual' => '{title_legend},title,type;{link_legend},profileUrl;{publish_legend},published',
     ],
     'fields' => [
@@ -71,7 +72,7 @@ $GLOBALS['TL_DCA']['tl_gr_source'] = [
         'type' => [
             'filter' => true,
             'inputType' => 'select',
-            'options' => ['google', 'manual'],
+            'options' => ['google', 'provenexpert', 'manual'],
             'reference' => &$GLOBALS['TL_LANG']['tl_gr_source']['types'],
             'eval' => ['submitOnChange' => true, 'tl_class' => 'w50'],
             'sql' => "varchar(16) NOT NULL default 'google'",
@@ -90,6 +91,16 @@ $GLOBALS['TL_DCA']['tl_gr_source'] = [
             'inputType' => 'select',
             'eval' => ['includeBlankOption' => true, 'submitOnChange' => true, 'doNotCopy' => true, 'tl_class' => 'clr long'],
             'sql' => "varchar(255) NOT NULL default ''",
+        ],
+        'peApiId' => [
+            'inputType' => 'text',
+            'eval' => ['mandatory' => true, 'maxlength' => 64, 'decodeEntities' => true, 'doNotCopy' => true, 'tl_class' => 'w50'],
+            'sql' => "varchar(64) NOT NULL default ''",
+        ],
+        'peApiKey' => [
+            'inputType' => 'text',
+            'eval' => ['mandatory' => true, 'maxlength' => 128, 'decodeEntities' => true, 'doNotCopy' => true, 'doNotShow' => true, 'tl_class' => 'w50'],
+            'sql' => "varchar(128) NOT NULL default ''",
         ],
         'language' => [
             'inputType' => 'text',

@@ -8,8 +8,8 @@ $GLOBALS['TL_LANG']['tl_content']['gr_list_legend'] = 'Auswahl und Darstellung';
 $GLOBALS['TL_LANG']['tl_content']['gr_notice_legend'] = 'Hinweis zur Echtheit';
 
 $GLOBALS['TL_LANG']['tl_content']['grSources'] = ['Quellen', 'Bewertungen dieser Quellen anzeigen (Backend → Bewertungen).'];
-$GLOBALS['TL_LANG']['tl_content']['grLinks'] = ['Links zu Google', 'Unter der Note verlinken.'];
-$GLOBALS['TL_LANG']['tl_content']['grLinkOptions'] = ['reviews' => 'Alle Bewertungen bei Google', 'write' => 'Bewertung schreiben'];
+$GLOBALS['TL_LANG']['tl_content']['grLinks'] = ['Links zum Bewertungsprofil', 'Unter der Note verlinken. „Bewertung schreiben“ gibt es nur bei Google.'];
+$GLOBALS['TL_LANG']['tl_content']['grLinkOptions'] = ['reviews' => 'Alle Bewertungen (Google oder ProvenExpert)', 'write' => 'Bewertung schreiben'];
 $GLOBALS['TL_LANG']['tl_content']['grLimit'] = ['Anzahl', '0 = alle.'];
 $GLOBALS['TL_LANG']['tl_content']['grOrder'] = ['Reihenfolge', ''];
 $GLOBALS['TL_LANG']['tl_content']['grOrderOptions'] = ['featured' => 'Hervorgehobene zuerst, dann neueste', 'date' => 'Neueste zuerst', 'rating' => 'Beste zuerst', 'random' => 'Zufällig'];

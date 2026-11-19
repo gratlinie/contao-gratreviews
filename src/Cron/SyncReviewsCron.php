@@ -8,7 +8,7 @@ use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
 use Gratlinie\GratReviewsBundle\Sync\ReviewSynchronizer;
 
 /**
- * Prüft stündlich, welche Google-Quellen laut ihrem Intervall fällig sind, und ruft sie ab.
+ * Prüft stündlich, welche Google- und ProvenExpert-Quellen laut ihrem Intervall fällig sind, und ruft sie ab.
  */
 #[AsCronJob('hourly')]
 class SyncReviewsCron

@@ -4,14 +4,15 @@
 {% block content %}
     {% add 'gratreviews_css' to head %}<link rel="stylesheet" href="{{ asset('css/gratreviews.css', 'gratlinie_grat_reviews') }}">{% endadd %}
     {% set google = gr_sources|filter(s => s.type == 'google')|first %}
+    {% set linked = gr_sources|filter(s => s.type in ['google', 'provenexpert'] and s.reviewsUrl|default)|first %}
     <div class="gr-summary">
         <p class="gr-summary__score">
             <span class="gr-summary__value">{{ gr_summary.average|number_format(1, ',') }}</span>
             {{ gr.stars(gr_summary.average) }}
         </p>
         <p class="gr-summary__count">
-            {%- if gr_sources|length == 1 and google -%}
-                {{ ('MSC.gr_count_google' ~ (gr_summary.count == 1 ? '_one'))|trans([gr_summary.count], 'contao_default') }}
+            {%- if gr_sources|length == 1 and gr_sources[0].type in ['google', 'provenexpert'] -%}
+                {{ ('MSC.gr_count_' ~ gr_sources[0].type ~ (gr_summary.count == 1 ? '_one'))|trans([gr_summary.count], 'contao_default') }}
             {%- else -%}
                 {{ ('MSC.gr_count' ~ (gr_summary.count == 1 ? '_one'))|trans([gr_summary.count], 'contao_default') }}
             {%- endif -%}
@@ -23,10 +24,10 @@
                 {% endfor %}
             </ul>
         {% endif %}
-        {% if (gr_show_reviews_link and google.reviewsUrl|default) or (gr_show_write_link and google.writeReviewUrl|default) %}
+        {% if (gr_show_reviews_link and linked) or (gr_show_write_link and google.writeReviewUrl|default) %}
             <p class="gr-summary__links">
-                {% if gr_show_reviews_link and google.reviewsUrl|default %}
-                    <a class="gr-link" href="{{ google.reviewsUrl }}" target="_blank" rel="noopener">{{ 'MSC.gr_all_reviews'|trans([], 'contao_default') }}</a>
+                {% if gr_show_reviews_link and linked %}
+                    <a class="gr-link" href="{{ linked.reviewsUrl }}" target="_blank" rel="noopener">{{ ('MSC.gr_all_reviews' ~ (linked.type == 'provenexpert' ? '_provenexpert'))|trans([], 'contao_default') }}</a>
                 {% endif %}
                 {% if gr_show_write_link and google.writeReviewUrl|default %}
                     <a class="gr-link" href="{{ google.writeReviewUrl }}" target="_blank" rel="noopener">{{ 'MSC.gr_write_review'|trans([], 'contao_default') }}</a>

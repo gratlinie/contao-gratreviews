@@ -6,9 +6,13 @@ namespace Gratlinie\GratReviewsBundle\Sync;
 
 use Contao\CoreBundle\Cache\CacheTagManager;
 use Contao\CoreBundle\Filesystem\VirtualFilesystemInterface;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Gratlinie\GratReviewsBundle\Google\PlacesClient;
 use Gratlinie\GratReviewsBundle\Google\PlacesException;
+use Gratlinie\GratReviewsBundle\ProvenExpert\ProvenExpertClient;
+use Gratlinie\GratReviewsBundle\ProvenExpert\ProvenExpertException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Uid\Uuid;
@@ -21,14 +25,22 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  *
  * Profilbilder der Bewertenden werden einmal heruntergeladen und lokal ausgeliefert, damit Besucher keine
  * Anfrage an Google-Server schicken.
+ *
+ * ProvenExpert-Quellen: Gesamtnote und Anzahl aus rating/summary/get (jedes Paket), die Bewertungen selbst
+ * vollständig aus rating/get (ab PREMIUM). Bewertungen, die ProvenExpert nicht mehr oder als unveröffentlicht
+ * liefert, werden gelöscht (erscheinen sie wieder, legt der nächste Abruf sie neu an). E-Mail-Adressen der
+ * Bewertenden werden nicht gespeichert.
  */
 class ReviewSynchronizer
 {
     private const DEFAULT_AVATAR_FOLDER = 'bewertungen';
 
+    private const MAX_PAGES = 50;
+
     public function __construct(
         private readonly Connection $db,
         private readonly PlacesClient $places,
+        private readonly ProvenExpertClient $provenExpert,
         private readonly HttpClientInterface $httpClient,
         #[Autowire(service: 'contao.filesystem.virtual.files')]
         private readonly VirtualFilesystemInterface $files,
@@ -38,12 +50,12 @@ class ReviewSynchronizer
     }
 
     /**
-     * @return list<int> IDs der Google-Quellen, deren Abruf fällig ist
+     * @return list<int> IDs der abrufbaren Quellen (Google, ProvenExpert), deren Abruf fällig ist
      */
     public function dueSources(int $now): array
     {
         return array_map('intval', $this->db->fetchFirstColumn(
-            "SELECT id FROM tl_gr_source WHERE type = 'google' AND published = 1 AND googlePlaceId != '' AND lastSync + syncInterval <= ?",
+            "SELECT id FROM tl_gr_source WHERE published = 1 AND lastSync + syncInterval <= ? AND ((type = 'google' AND googlePlaceId != '') OR (type = 'provenexpert' AND peApiId != '' AND peApiKey != ''))",
             [$now],
         ));
     }
@@ -52,9 +64,16 @@ class ReviewSynchronizer
     {
         $source = $this->db->fetchAssociative('SELECT * FROM tl_gr_source WHERE id = ?', [$sourceId]);
 
-        if (false === $source || 'google' !== $source['type']) {
-            return SyncResult::failed('Keine Google-Quelle mit dieser ID.');
-        }
+        return match ($source['type'] ?? null) {
+            'google' => $this->syncGoogle($source),
+            'provenexpert' => $this->syncProvenExpert($source),
+            default => SyncResult::failed('Keine abrufbare Quelle mit dieser ID.'),
+        };
+    }
+
+    private function syncGoogle(array $source): SyncResult
+    {
+        $sourceId = (int) $source['id'];
 
         if ('' === $source['googlePlaceId']) {
             return $this->finish($sourceId, SyncResult::failed('Noch kein Unternehmensprofil gewählt.'));
@@ -119,6 +138,117 @@ class ReviewSynchronizer
         }
 
         return $this->finish($sourceId, SyncResult::ok($created, $updated, (float) ($place['rating'] ?? 0), (int) ($place['userRatingCount'] ?? 0)));
+    }
+
+    private function syncProvenExpert(array $source): SyncResult
+    {
+        $sourceId = (int) $source['id'];
+
+        try {
+            $summary = $this->provenExpert->summary($source['peApiId'], $source['peApiKey']);
+        } catch (ProvenExpertException $exception) {
+            $this->logger?->error('GratReviews: Abruf von Quelle '.$sourceId.' fehlgeschlagen – '.$exception->getMessage());
+
+            return $this->finish($sourceId, SyncResult::failed($exception->getMessage()));
+        }
+
+        $this->db->update('tl_gr_source', [
+            'ratingAverage' => round($summary['ratingValue'], 2),
+            'ratingCount' => $summary['reviewCount'],
+        ], ['id' => $sourceId]);
+
+        $ok = static fn (int $created, int $updated, string $note = ''): SyncResult => SyncResult::ok($created, $updated, $summary['ratingValue'], $summary['reviewCount'], 'ProvenExpert', $note);
+
+        // Einzelne Bewertungen gibt es erst ab Paket PREMIUM – ohne sie bleibt es bei Note und Anzahl
+        $ratings = [];
+        $complete = false;
+
+        try {
+            for ($page = 0; $page < self::MAX_PAGES; ++$page) {
+                $batch = $this->provenExpert->ratings($source['peApiId'], $source['peApiKey'], $page * ProvenExpertClient::PAGE_SIZE);
+                $ratings += $batch;
+
+                if (\count($batch) < ProvenExpertClient::PAGE_SIZE) {
+                    $complete = true;
+                    break;
+                }
+            }
+        } catch (ProvenExpertException $exception) {
+            $this->logger?->warning('GratReviews: Bewertungen von Quelle '.$sourceId.' nicht abrufbar – '.$exception->getMessage());
+
+            return $this->finish($sourceId, $ok(0, 0, 'Einzelne Bewertungen nicht abrufbar (erst ab ProvenExpert-Paket PREMIUM) – '.$exception->getMessage()));
+        }
+
+        $created = 0;
+        $updated = 0;
+        $seen = [];
+
+        foreach ($ratings as $id => $rating) {
+            $externalId = (string) $id;
+
+            if ('' === $externalId || !\is_array($rating)) {
+                continue;
+            }
+
+            // Auf ProvenExpert unveröffentlicht: wie gelöscht behandeln
+            if ('published' !== ($rating['status'] ?? 'published')) {
+                continue;
+            }
+
+            $seen[] = $externalId;
+            $existing = $this->db->fetchAssociative('SELECT id FROM tl_gr_review WHERE pid = ? AND externalId = ?', [$sourceId, $externalId]);
+
+            $row = [
+                'tstamp' => time(),
+                'author' => mb_substr($this->shortName((string) ($rating['user']['name'] ?? '')), 0, 128),
+                'rating' => max(1, min(5, (int) round((float) ($rating['ratingValue'] ?? 0)))),
+                'date' => (int) ($rating['created'] ?? time()),
+                'text' => trim((string) ($rating['feedback'] ?? '')),
+            ];
+
+            if (false === $existing) {
+                $this->db->insert('tl_gr_review', $row + ['pid' => $sourceId, 'externalId' => $externalId, 'published' => 1]);
+                ++$created;
+            } else {
+                // „Veröffentlicht“ und „Hervorheben“ bleiben, wie im Backend gesetzt
+                $this->db->update('tl_gr_review', $row, ['id' => $existing['id']]);
+                ++$updated;
+            }
+        }
+
+        // Nur nach vollständigem Abruf und nie bei leerer Antwort trotz Bewertungen: Bewertungen, die ProvenExpert
+        // nicht mehr (öffentlich) führt, löschen. Von Hand angelegte Einträge (ohne externalId) bleiben.
+        $deleted = 0;
+
+        if ($complete && ([] !== $seen || 0 === $summary['reviewCount'])) {
+            $deleted = $this->db->executeStatement(
+                "DELETE FROM tl_gr_review WHERE pid = ? AND externalId != ''".($seen ? ' AND externalId NOT IN (?)' : ''),
+                $seen ? [$sourceId, $seen] : [$sourceId],
+                $seen ? [ParameterType::INTEGER, ArrayParameterType::STRING] : [],
+            );
+        }
+
+        $notes = array_filter([
+            $deleted ? \sprintf('%d entfernt (auf ProvenExpert gelöscht oder unveröffentlicht).', $deleted) : '',
+            $complete ? '' : \sprintf('Nur die neuesten %d Bewertungen abgerufen.', \count($ratings)),
+        ]);
+
+        return $this->finish($sourceId, $ok($created, $updated, implode(' ', $notes)));
+    }
+
+    /**
+     * Nachname abkürzen („Max Mustermann“ → „Max M.“): ProvenExpert liefert über die API den vollständigen
+     * Namen, auf dem Profil erscheint er je nach Einstellung gekürzt oder anonym.
+     */
+    private function shortName(string $name): string
+    {
+        $parts = preg_split('/\s+/u', trim($name), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+        if (\count($parts) < 2) {
+            return implode(' ', $parts);
+        }
+
+        return $parts[0].' '.mb_strtoupper(mb_substr((string) end($parts), 0, 1)).'.';
     }
 
     private function finish(int $sourceId, SyncResult $result): SyncResult

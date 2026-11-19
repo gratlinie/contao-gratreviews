@@ -16,14 +16,14 @@ use Gratlinie\GratReviewsBundle\Sync\ReviewSynchronizer;
 /**
  * Profil auswählen: Mit API-Schlüssel und Suchbegriff (Firmenname, Ort) sucht die Textsuche von Google
  * passende Einträge; die Treffer stehen mit Adresse in der Auswahl. Nach dem Speichern eines neuen Profils
- * werden die Bewertungen sofort abgerufen.
+ * (bei ProvenExpert: neuer Zugangsdaten) werden die Bewertungen sofort abgerufen.
  */
 class SourceListener
 {
     /** @var array<string, array<string, string>> */
     private array $searchCache = [];
 
-    private bool $placeChanged = false;
+    private bool $sourceChanged = false;
 
     public function __construct(
         private readonly PlacesClient $places,
@@ -78,7 +78,18 @@ class SourceListener
     #[AsCallback(table: 'tl_gr_source', target: 'fields.googlePlaceId.save')]
     public function placeSaved(string $value, DataContainer $dc): string
     {
-        $this->placeChanged = '' !== $value && $value !== $dc->activeRecord?->googlePlaceId;
+        $this->sourceChanged = '' !== $value && $value !== $dc->activeRecord?->googlePlaceId;
+
+        return $value;
+    }
+
+    #[AsCallback(table: 'tl_gr_source', target: 'fields.peApiId.save')]
+    #[AsCallback(table: 'tl_gr_source', target: 'fields.peApiKey.save')]
+    public function credentialsSaved(string $value, DataContainer $dc): string
+    {
+        if ('' !== $value && $value !== $dc->activeRecord?->{$dc->field}) {
+            $this->sourceChanged = true;
+        }
 
         return $value;
     }
@@ -86,7 +97,7 @@ class SourceListener
     #[AsCallback(table: 'tl_gr_source', target: 'config.onsubmit')]
     public function onSubmit(DataContainer $dc): void
     {
-        if (!$this->placeChanged || 'google' !== $dc->activeRecord?->type) {
+        if (!$this->sourceChanged || !\in_array($dc->activeRecord?->type, ['google', 'provenexpert'], true)) {
             return;
         }
 
@@ -100,9 +111,9 @@ class SourceListener
     #[AsCallback(table: 'tl_gr_source', target: 'list.label.label')]
     public function listLabel(array $row, string $label, DataContainer $dc, array $columns): array
     {
-        $isGoogle = 'google' === $row['type'];
-        $columns[2] = $isGoogle && $row['ratingCount'] ? number_format((float) $row['ratingAverage'], 1, ',', '').' ★' : '–';
-        $columns[3] = $isGoogle ? (string) $row['ratingCount'] : '–';
+        $isRemote = \in_array($row['type'], ['google', 'provenexpert'], true);
+        $columns[2] = $isRemote && $row['ratingCount'] ? number_format((float) $row['ratingAverage'], 1, ',', '').' ★' : '–';
+        $columns[3] = $isRemote ? (string) $row['ratingCount'] : '–';
         $columns[4] = $row['lastSync'] ? Date::parse(Date::getNumericDatimFormat(), (int) $row['lastSync']).(str_starts_with((string) $row['lastStatus'], 'Fehler') ? ' ⚠' : '') : '–';
 
         return $columns;

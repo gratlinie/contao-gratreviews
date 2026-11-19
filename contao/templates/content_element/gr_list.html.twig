@@ -23,13 +23,16 @@
                             {% if review.authorUrl %}
                                 <a class="gr-review__name" href="{{ review.authorUrl }}" target="_blank" rel="noopener nofollow">{{ review.author }}</a>
                             {% else %}
-                                <span class="gr-review__name">{{ review.author }}</span>
+                                <span class="gr-review__name">{{ review.author ?: 'MSC.gr_anonymous'|trans([], 'contao_default') }}</span>
                             {% endif %}
                             <span class="gr-review__meta">
                                 <span>{{ review.date_formatted }}</span>
                                 {% if review.sourceType == 'google' %}
                                     <span class="gr-sep" aria-hidden="true">·</span>
                                     {% if review.reviewUrl %}<a href="{{ review.reviewUrl }}" target="_blank" rel="noopener">Google</a>{% else %}<span>Google</span>{% endif %}
+                                {% elseif review.sourceType == 'provenexpert' %}
+                                    <span class="gr-sep" aria-hidden="true">·</span>
+                                    {% if review.sourceUrl %}<a href="{{ review.sourceUrl }}" target="_blank" rel="noopener">ProvenExpert</a>{% else %}<span>ProvenExpert</span>{% endif %}
                                 {% endif %}
                             </span>
                         </span>
